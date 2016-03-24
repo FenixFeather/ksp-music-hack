@@ -118,7 +118,7 @@ class Player(object):
                         if not self.player.is_playing():
                             self.play_next_track("Space")
 
-                        if vessel.parts.controlling.docking_port:
+                        if vessel.parts.controlling.docking_port and self.tracks["Docking"]:
                             self.player.stop()
                             self.play_next_track("Docking")
                             while vessel.parts.controlling.docking_port:
@@ -127,7 +127,7 @@ class Player(object):
                                 time.sleep(self.poll_rate * 0.25)
                             self.fade_out(1.5)
 
-                        if self.conn.space_center.target_vessel:
+                        if self.conn.space_center.target_vessel and self.tracks["Rendezvous"]:
                             distance = math.sqrt(sum([i**2 for i in (self.conn.space_center.target_vessel.position(self.conn.space_center.active_vessel.reference_frame))]))
                             if distance < 1000:
                                 self.fade_out(1.5)
