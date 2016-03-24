@@ -109,7 +109,7 @@ class Player(object):
             # We're going to switch away from polling here to
             # avoid unnecessary requests. We need to keep an eye
             # out for the transitioning outside of the atmosphere
-            # altitude = self.conn.add_stream(getattr, vessel.flight(), 'mean_altitude')
+
             try:
                 with self.conn.stream(getattr, vessel.flight(), "mean_altitude") as altitude:
                     while altitude() < current_body.atmosphere_depth:
