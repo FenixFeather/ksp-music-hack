@@ -1,0 +1,14 @@
+Space:
+  - './stock/space'
+
+Editor:
+  - './stock/editor'
+
+SpaceCenter:
+  - './stock/seamless_birds_quiet.wav'
+
+Docking:
+
+Rendezvous:
+
+TrackingStation:
