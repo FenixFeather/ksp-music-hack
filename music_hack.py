@@ -165,7 +165,9 @@ class Player(object):
         self.player.stop()
 
     def load_track(self, path):
-        return self.instance.media_new(os.path.abspath(path))
+        if path[0:4] != "http":
+            return self.instance.media_new(os.path.abspath(path))
+        return self.instance.media_new(path)
 
     def parse_tracks(self, path):
         result = {}
