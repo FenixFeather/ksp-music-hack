@@ -139,6 +139,9 @@ class Player(object):
                                                 self.play_next_track("Docking")
                                 except AttributeError:
                                     continue
+                                finally:
+                                    self.fade_out(1.5)
+                                    
             except krpc.error.RPCError:
                 continue
 
