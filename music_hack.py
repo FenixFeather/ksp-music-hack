@@ -7,6 +7,8 @@ import yaml
 import os
 import socket
 import math
+import logging
+import sys
 
 class Player(object):
     def __init__(self, path, preload=True, poll_rate=1):
@@ -137,6 +139,8 @@ class Player(object):
                                         while math.sqrt(sum([i**2 for i in position()])) < 1000:
                                             if not self.player.is_playing():
                                                 self.play_next_track("Rendezvous")
+                                            if not self.conn.space_center.target_vessel:
+                                                break
                                 except AttributeError:
                                     continue
                                 finally:
@@ -148,8 +152,9 @@ class Player(object):
     def play_track(self, track):
         self.player.set_media(track)
         if self.player.play() == -1:
-            print("Couldn't play a file. Skipping.")
+            logging.warning("Couldn't play a file. Skipping.")
             return False
+        logging.info("Playing {}.".format(track.get_mrl()))
         return True
 
     def fade_out(self, seconds):
@@ -177,10 +182,9 @@ class Player(object):
             for k in stuff:
                 result[k] = []
                 try:
-                    random.shuffle(stuff[k])
                     for v in stuff[k]:
                         if not os.path.exists(v):
-                            print("{}: {} not found.".format(k, v))
+                            logging.warning("{}: {} not found.".format(k, v))
                         elif os.path.isfile(v):
                             if self.preload:
                                 result[k].append(self.load_track(v))
@@ -192,12 +196,14 @@ class Player(object):
                                     result[k].append(self.load_track(os.path.join(v, f)))
                                 else:
                                     result[k].append(os.path.join(v, f))
+                    random.shuffle(result[k])
                 except TypeError:
-                    print("No music in {}.".format(k))
+                    logging.warning("No music in {0}. Disabling music for {0}.".format(k))
                     
         return result
                     
 def main():
+    logging.basicConfig(level=logging.DEBUG if "-v" in sys.argv else logging.WARNING)
     config_path = "music.yaml"
     player = Player(config_path)
     player.play()
