@@ -131,12 +131,12 @@ class Player(object):
                             distance = math.sqrt(sum([i**2 for i in (self.conn.space_center.target_vessel.position(self.conn.space_center.active_vessel.reference_frame))]))
                             if distance < 1000:
                                 self.fade_out(1.5)
-                                self.play_next_track("Docking")
+                                self.play_next_track("Rendezvous")
                                 try:
                                     with self.conn.stream(vessel.position, self.conn.space_center.target_vessel.reference_frame) as position:
                                         while math.sqrt(sum([i**2 for i in position()])) < 1000:
                                             if not self.player.is_playing():
-                                                self.play_next_track("Docking")
+                                                self.play_next_track("Rendezvous")
                                 except AttributeError:
                                     continue
                                 finally:
