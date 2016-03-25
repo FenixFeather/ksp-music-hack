@@ -156,6 +156,7 @@ class Player(object):
             logging.warning("Couldn't play a file. Skipping.")
             return False
         logging.info("Playing {}.".format(track.get_mrl()))
+        time.sleep(self.poll_rate)
         return True
 
     def fade_out(self, seconds):
