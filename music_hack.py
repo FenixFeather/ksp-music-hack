@@ -12,14 +12,15 @@ import logging
 import sys
 
 class Player(object):
-    def __init__(self, path, preload=True, poll_rate=1):
+    def __init__(self, path, preload=True):
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
         self.preload = preload
+        self.config = {}
         self.tracks = self.parse_tracks(path)
         self.conn = krpc.connect(name="Music Player")
         self.tracks_played = {scene:0 for scene in self.tracks}
-        self.poll_rate = poll_rate
+        self.poll_rate = self.config["poll_rate"]
         self.current_scene = "SpaceCenter"
 
     def get_current_scene(self):
@@ -182,6 +183,10 @@ class Player(object):
         with open(path) as text:
             stuff = yaml.load(text)
             for k in stuff:
+                if k in ["gamelog", "address", "rpc_port", "stream_port", "poll_rate"]:
+                    self.config[k] = stuff[k]
+                    continue
+                    
                 result[k] = []
                 try:
                     for v in stuff[k]:
