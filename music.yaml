@@ -15,7 +15,6 @@ poll_rate: 1
 
 # Music to play at main menu
 MainMenu:
-  - 'C:\\Users\\Thomas\\Music\\Various\\Life is Strange Soundtrack\\15-Jonathan Morali _ Golden Hour.mp3'
 
 # Music to play while above an atmosphere
 Space:
