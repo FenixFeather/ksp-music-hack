@@ -2,6 +2,21 @@
 # Track paths can be directories or individual files
 # Windows style paths need to have double backslashes
 
+# Path to gamelog. Required for playing main menu music
+gamelog: 'C:\\Program Files (x86)\\Steam\\steamapps\\common\\Kerbal Space Program\\KSP.log'
+
+# kRPC connection options. This is the default for kRPC.
+address: '127.0.0.1'
+rpc_port: 50000
+stream_port: 50001
+
+# How often to poll, in seconds, for scene changes (doesn't apply in flight)
+poll_rate: 1
+
+# Music to play at main menu
+MainMenu:
+  - 'C:\\Users\\Thomas\\Music\\Various\\Life is Strange Soundtrack\\15-Jonathan Morali _ Golden Hour.mp3'
+
 # Music to play while above an atmosphere
 Space:
   - './stock/space'
