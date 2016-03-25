@@ -10,6 +10,7 @@ import socket
 import math
 import logging
 import sys
+from collections import deque
 
 class Player(object):
     def __init__(self, path, preload=True):
@@ -37,12 +38,14 @@ class Player(object):
             return False
 
     def wait_for_server(self):
-        gamelog = GameLog(self.config["gamelog"])
+        gamelog = GameLog(self.config["gamelog"], self.config["poll_rate"])
+
+        gamelog.wait_for_game_start()
         
         while True:
             if self.can_connect() or gamelog.loaded_save():
                 self.player.stop()
-                logging.info("Server online.")
+                logging.info("Save game loaded.")
                 return
 
             if gamelog.loaded():
@@ -51,7 +54,7 @@ class Player(object):
                 logging.info("Main Menu reached")
 
             logging.debug("Game still loading.")
-            time.sleep(self.poll_rate / 4)
+            time.sleep(self.poll_rate / 10)
 
     def connect(self, name="Music Player"):
         self.conn = krpc.connect(name=name,
@@ -249,22 +252,81 @@ class Player(object):
         return result
 
 class GameLog(object):
-    def __init__(self, path):
-        pass
+    def __init__(self, path, poll_rate, maxlen=10):
+        self.size = os.path.getsize(path)
+        self.path = path
+        self.valid = (path is not None) and os.path.isfile(path)
+        if not self.valid:
+            logging.warning("Invalid gamelog path!")
+        self.loaded_flag = False
+        self.size_history = deque(range(maxlen), maxlen=maxlen)
+        self.poll_rate = poll_rate
+        self.update_size()
 
+    def wait_for_game_start(self):
+        logging.info("Waiting for game start...")
+        if self.valid:
+            while True:
+                self.update_size()
+                if self.get_diff() != 0:
+                    logging.info("Game started.")
+                    return
+                time.sleep(self.poll_rate)
+        
     def loaded(self):
+        """Return True only once after loaded."""
+        self.update_size()
+        lines = self.get_changed_lines()
+        
+        if self.valid and not self.loaded_flag:
+            for line in lines:
+                if "Scene Change : From LOADING to MAINMENU" in line:
+                    self.loaded_flag = True
+                    return True
+            if all([i == self.size_history[0] for i in self.size_history]):
+                logging.info("Log hasn't changed for a while. Assume loaded.")
+                self.loaded_flag = True
+                return True
+            
         return False
 
     def loaded_save(self):
+        self.update_size()
+        lines = self.get_changed_lines()
+
+        if self.valid:
+            for line in lines:
+                if "Scene Change : From MAINMENU to SPACECENTER" in line:
+                    return True
+
         return False
-                    
+
+    def update_size(self):
+        if self.valid:
+            self.size_history.append(os.path.getsize(self.path))
+
+    def get_size(self):
+        return self.size_history[-1]
+
+    def get_diff(self):
+        return self.size_history[-1] - self.size_history[-2]
+
+    def get_changed_lines(self):
+        if self.valid:
+            with open(self.path, 'r') as log:
+                log.seek(self.get_diff(), 2)
+                return log.readlines()
+        
 def main():
     logging.basicConfig(level=logging.INFO if "-v" in sys.argv else (logging.DEBUG if "-vv" in sys.argv else logging.WARNING))
     config_path = "music.yaml"
-    player = Player(config_path)
-    player.wait_for_server()
-    player.connect()
-    player.play()
+    try:
+        player = Player(config_path)
+        player.wait_for_server()
+        player.connect()
+        player.play()
+    except KeyboardInterrupt:
+        print("Quit.")
 
 if __name__ == "__main__":
     main()
