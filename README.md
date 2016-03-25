@@ -37,7 +37,7 @@ Controls VLC based on events that occur in-game using [KRPC](https://github.com/
 - Space music continues after switch to space center till next scene change.
 
 ## Licensing
-Music tracks by [Kevin MacLeod](incompetech.com)
+Music tracks by [Kevin MacLeod](http://incompetech.com)
 Licensed under Creative Commons: [By Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/)
 
 Original birdsong ambience by [dobroide](http://www.freesound.org/people/dobroide/)
