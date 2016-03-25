@@ -191,7 +191,7 @@ class Player(object):
                                 result[k].append(v)
                         elif os.path.isdir(v):
                             for f in os.listdir(v):
-                                if os.path.isfile(f):
+                                if os.path.isfile(os.path.join(v,f)):
                                     if self.preload:
                                         result[k].append(self.load_track(os.path.join(v, f)))
                                     else:
@@ -199,6 +199,7 @@ class Player(object):
                         else:
                             logging.warning("{}: {} not found.".format(k, v))
                             
+                    logging.info("{}: {} tracks loaded".format(k, len(result[k])))
                     random.shuffle(result[k])
                 except TypeError:
                     logging.warning("No music in {0}. Disabling music for {0}.".format(k))
