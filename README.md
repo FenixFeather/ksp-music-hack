@@ -8,6 +8,7 @@ Controls VLC based on events that occur in-game using [KRPC](https://github.com/
 - Can play dramatic music during docking or rendezvous a la _Interstellar_
 - Play custom music while editing, above the atmosphere, at the space center, or at the tracking station, eg play the Normandy galaxy map theme at the tracking center
 - Configurable via ```music.yaml```
+- Can play music at main menu
 - Comes with stock music
 
 ## Requirements
@@ -16,23 +17,23 @@ Controls VLC based on events that occur in-game using [KRPC](https://github.com/
 - KRPC (```pip install krpc```)
 - PyYAML (```pip install PyYAML```)
 
-## Usage
+## Configuration
 - Edit ```music.yaml``` 
     - Individual files or directories with music inside are allowed
     - To disable music for a label, just delete all the bullets underneath it
     - Backslashes must be doubled for Windows style paths
-- Start KSP
-- Mute KSP music
-- Load game
+- KSP's music should be muted
+
+## Usage
+- Start music program and KSP, in any order
+    - Run the program with (```python music_hack.py``` or ```./music_hack.py```)
 - Start KRPC server (or set to autostart)
-- Run the program (```python music_hack.py``` or ```./music_hack.py```)
 - Accept connection from KSP (or set KRPC server to auto-accept)
 - Crashes of the music player only require a restart of the music player
 
 ## Limitations
 - Can only distinguish the tracking center. The rest of the space center scenes all play music from the space center label.
-- Could not locate stock tracking station music
-- Can't play KSP theme when the program launches
+- Doesn't come with stock tracking station music or main menu music (licensing issues)
 - Youtube playback depends on whether LibVLC has up-to-date Youtube capabilities.
 - Space music continues after switch to space center till next scene change.
 
