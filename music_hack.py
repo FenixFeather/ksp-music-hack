@@ -184,9 +184,7 @@ class Player(object):
                 result[k] = []
                 try:
                     for v in stuff[k]:
-                        if not os.path.exists(v):
-                            logging.warning("{}: {} not found.".format(k, v))
-                        elif os.path.isfile(v):
+                        if os.path.isfile(v) or v[0:4] == "http":
                             if self.preload:
                                 result[k].append(self.load_track(v))
                             else:
@@ -198,6 +196,9 @@ class Player(object):
                                         result[k].append(self.load_track(os.path.join(v, f)))
                                     else:
                                         result[k].append(os.path.join(v, f))
+                        else:
+                            logging.warning("{}: {} not found.".format(k, v))
+                            
                     random.shuffle(result[k])
                 except TypeError:
                     logging.warning("No music in {0}. Disabling music for {0}.".format(k))
