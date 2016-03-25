@@ -1,14 +1,24 @@
+# Music configuration file
+# Track paths can be directories or individual files
+# Windows style paths need to have double backslashes
+
+# Music to play while above an atmosphere
 Space:
   - './stock/space'
 
+# Music to play while in VAB or SPH
 Editor:
   - './stock/editor'
-
+  
+# Music to play while in Space Center, and all buildings except Tracking Station
 SpaceCenter:
   - './stock/seamless_birds_quiet.wav'
 
+# Music to play at Tracking Station
+TrackingStation:
+
+# Music to play while craft is being controlled from a docking part
 Docking:
 
+# Music to play while craft is 1000 meters away from a target vessel
 Rendezvous:
-
-TrackingStation:
