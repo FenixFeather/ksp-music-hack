@@ -18,10 +18,46 @@ class Player(object):
         self.preload = preload
         self.config = {}
         self.tracks = self.parse_tracks(path)
-        self.conn = krpc.connect(name="Music Player")
+        self.conn = None
         self.tracks_played = {scene:0 for scene in self.tracks}
         self.poll_rate = self.config["poll_rate"]
         self.current_scene = "SpaceCenter"
+
+    def can_connect(self):
+        address = (self.config["address"], self.config["rpc_port"])
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.connect(address)
+            s.shutdown(socket.SHUT_RDWR)
+            s.close()
+            return True
+        except Exception as e:
+            logging.debug(e)
+            return False
+
+    def wait_for_server(self):
+        gamelog = GameLog(self.config["gamelog"])
+        
+        while True:
+            if self.can_connect() or gamelog.loaded_save():
+                self.player.stop()
+                logging.info("Server online.")
+                return
+
+            if gamelog.loaded():
+                self.player.stop()
+                self.play_next_track("MainMenu")
+                logging.info("Main Menu reached")
+
+            logging.debug("Game still loading.")
+            time.sleep(self.poll_rate / 4)
+
+    def connect(self, name="Music Player"):
+        self.conn = krpc.connect(name=name,
+                                 address=self.config["address"],
+                                 rpc_port=self.config["rpc_port"],
+                                 stream_port=self.config["stream_port"])
 
     def get_current_scene(self):
         try:
@@ -211,11 +247,23 @@ class Player(object):
                     logging.warning("No music in {0}. Disabling music for {0}.".format(k))
                     
         return result
+
+class GameLog(object):
+    def __init__(self, path):
+        pass
+
+    def loaded(self):
+        return False
+
+    def loaded_save(self):
+        return False
                     
 def main():
-    logging.basicConfig(level=logging.DEBUG if "-v" in sys.argv else logging.WARNING)
+    logging.basicConfig(level=logging.INFO if "-v" in sys.argv else (logging.DEBUG if "-vv" in sys.argv else logging.WARNING))
     config_path = "music.yaml"
     player = Player(config_path)
+    player.wait_for_server()
+    player.connect()
     player.play()
 
 if __name__ == "__main__":
