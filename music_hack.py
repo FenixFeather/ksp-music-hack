@@ -172,12 +172,13 @@ class Player(object):
 
                         if self.conn.space_center.target_vessel and self.tracks["Rendezvous"]:
                             distance = math.sqrt(sum([i**2 for i in (self.conn.space_center.target_vessel.position(self.conn.space_center.active_vessel.reference_frame))]))
-                            if distance < 1000:
+                            rendezvous_distance = self.config["rendezvous_distance"]
+                            if distance < rendezvous_distance:
                                 self.fade_out(1.5)
                                 self.play_next_track("Rendezvous")
                                 try:
                                     with self.conn.stream(vessel.position, self.conn.space_center.target_vessel.reference_frame) as position:
-                                        while math.sqrt(sum([i**2 for i in position()])) < 1000:
+                                        while math.sqrt(sum([i**2 for i in position()])) < rendezvous_distance:
                                             if not self.player.is_playing():
                                                 self.play_next_track("Rendezvous")
                                             if not self.conn.space_center.target_vessel:
@@ -222,7 +223,7 @@ class Player(object):
         with open(path) as text:
             stuff = yaml.load(text)
             for k in stuff:
-                if k in ["gamelog", "address", "rpc_port", "stream_port", "poll_rate"]:
+                if k in ["gamelog", "address", "rpc_port", "stream_port", "poll_rate", "rendezvous_distance"]:
                     self.config[k] = stuff[k]
                     continue
                     

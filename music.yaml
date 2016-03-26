@@ -34,5 +34,6 @@ TrackingStation:
 # Music to play while craft is being controlled from a docking part
 Docking:
 
-# Music to play while craft is 1000 meters away from a target vessel
+# Music to play while craft is rendezvous_distance meters away from a target vessel
+rendezvous_distance: 1000
 Rendezvous:
