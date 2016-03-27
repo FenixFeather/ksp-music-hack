@@ -11,6 +11,7 @@ import math
 import logging
 import sys
 from collections import deque
+import argparse
 
 class Player(object):
     def __init__(self, path, preload=True):
@@ -319,8 +320,16 @@ class GameLog(object):
                 return log.readlines()
         
 def main():
-    logging.basicConfig(level=logging.INFO if "-v" in sys.argv else (logging.DEBUG if "-vv" in sys.argv else logging.WARNING))
-    config_path = "music.yaml"
+    parser = argparse.ArgumentParser(description="Custom soundtrack player for Kerbal Space Program")
+    parser.add_argument("--config_path", "-c", default="music.yaml")
+    parser.add_argument('--verbose', '-v', action='count')
+    args = parser.parse_args()
+
+    levels = {1:logging.INFO, 2:logging.DEBUG}
+    
+    logging.basicConfig(level=levels.get(args.verbose, logging.WARNING))
+    config_path = args.config_path
+    
     try:
         player = Player(config_path)
         player.wait_for_server()
