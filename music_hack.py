@@ -155,10 +155,12 @@ class Player(object):
             try:
                 with self.conn.stream(getattr, vessel.flight(), "mean_altitude") as altitude:
                     while altitude() < current_body.atmosphere_depth:
+                        current_body = vessel.orbit.body
                         if self.player.is_playing():
                             self.player.stop()
 
                     while altitude() >= current_body.atmosphere_depth:
+                        current_body = vessel.orbit.body
                         if not self.player.is_playing():
                             self.play_next_track("Space")
 
