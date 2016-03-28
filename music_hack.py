@@ -41,7 +41,7 @@ class Player(object):
     def wait_for_server(self):
         gamelog = GameLog(self.config["gamelog"], self.config["poll_rate"])
 
-        gamelog.wait_for_game_start()
+        gamelog.wait_for_game_start(self)
         
         while True:
             if self.can_connect() or gamelog.loaded_save():
@@ -267,12 +267,12 @@ class GameLog(object):
         self.poll_rate = poll_rate
         self.update_size()
 
-    def wait_for_game_start(self):
+    def wait_for_game_start(self, player):
         logging.info("Waiting for game start...")
         if self.valid:
             while True:
                 self.update_size()
-                if self.get_diff() != 0:
+                if self.get_diff() != 0 or player.can_connect():
                     logging.info("Game started.")
                     return
                 time.sleep(self.poll_rate)
